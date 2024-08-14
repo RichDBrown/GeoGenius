@@ -36,25 +36,6 @@ import com.example.geogenius.utils.Screen
 import com.example.geogenius.utils.font
 
 @Composable
-fun LoginScreen(context: Context, navController: NavController) {
-    DisplayBackground(context = context)
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        TitleText()
-        Spacer(modifier = Modifier.size(34.dp))
-
-        DescriptionCard()
-        Spacer(modifier = Modifier.size(34.dp))
-
-        LoginCard(navController)
-    }
-}
-
-@Composable
 private fun TitleText() {
     Text(
         text = stringResource(R.string.login_title),
@@ -133,5 +114,24 @@ private fun LoginCard(navController: NavController) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun LoginScreen(context: Context, navController: NavController) {
+    DisplayBackground(context = context)
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        TitleText()
+        Spacer(modifier = Modifier.size(34.dp))
+
+        DescriptionCard()
+        Spacer(modifier = Modifier.size(34.dp))
+
+        LoginCard(navController)
     }
 }

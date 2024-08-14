@@ -25,6 +25,19 @@ sealed class Screen(val route: String) {
     }
 }
 
+fun options(): MutableList<String> {
+    val options = mutableListOf<String>()
+
+    val countryNamesSet = countries.keys.toMutableSet()
+    for (i in 1..4) {
+        val randomIndex = Random.nextInt(countryNamesSet.size)
+        val randomCountryName = countryNamesSet.elementAt(randomIndex)
+        options.add(randomCountryName)
+        countryNamesSet.remove(randomCountryName)
+    }
+    return options
+}
+
 fun questions(): List<Question> {
     val questions = mutableListOf<Question>()
     var options: List<String>
@@ -43,17 +56,4 @@ fun questions(): List<Question> {
         questions.add(question)
     }
     return questions
-}
-
-fun options(): MutableList<String> {
-    val options = mutableListOf<String>()
-
-    val countryNamesSet = countries.keys.toMutableSet()
-    for (i in 1..4) {
-        val randomIndex = Random.nextInt(countryNamesSet.size)
-        val randomCountryName = countryNamesSet.elementAt(randomIndex)
-        options.add(randomCountryName)
-        countryNamesSet.remove(randomCountryName)
-    }
-    return options
 }

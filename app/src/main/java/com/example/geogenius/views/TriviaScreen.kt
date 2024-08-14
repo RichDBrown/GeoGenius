@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.geogenius.R
-import com.example.geogenius.model.Question
 import com.example.geogenius.ui.theme.DarkBlue
 import com.example.geogenius.ui.theme.LightBlue
 import com.example.geogenius.utils.Screen
@@ -41,71 +40,7 @@ import com.example.geogenius.utils.font
 import com.example.geogenius.utils.questions
 import kotlinx.coroutines.delay
 
-
-private val listOfQuestions = questions()
-
-@Composable
-fun TriviaScreen(context: Context, navController: NavController, username: String) {
-    var currentQuestionIndex by remember {
-        mutableStateOf(0)
-    }
-    val currentQuestion = listOfQuestions[currentQuestionIndex]
-
-    var selectedOption by remember {
-        mutableStateOf(0)
-    }
-
-    DisplayBackground(context = context)
-
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CountDown(navController, username)
-        Spacer(modifier = Modifier.size(19.dp))
-
-        Points()
-
-        CountryFlag(currentQuestion.flag)
-        Spacer(modifier = Modifier.size(21.dp))
-
-        OptionBox(currentOption = currentQuestion.option1, isSelected = selectedOption == 1) {
-            selectedOption = 1
-        }
-        Spacer(modifier = Modifier.size(21.dp))
-
-        OptionBox(currentOption = currentQuestion.option2, isSelected = selectedOption == 2) {
-            selectedOption = 2
-        }
-        Spacer(modifier = Modifier.size(21.dp))
-
-        OptionBox(currentOption = currentQuestion.option3, isSelected = selectedOption == 3) {
-            selectedOption = 3
-        }
-        Spacer(modifier = Modifier.size(21.dp))
-
-        OptionBox(currentOption = currentQuestion.option4, isSelected = selectedOption == 4) {
-            selectedOption = 4
-        }
-        Spacer(modifier = Modifier.size(21.dp))
-
-        Submit(isEnabled = selectedOption != 0) {
-            currentQuestionIndex++
-            selectedOption = 0
-        }
-    }
-}
-
-@Composable
-private fun CountDown(navController: NavController, username: String) {
-    Box(
-        contentAlignment = Alignment.Center
-    ) {
-        CountDownIndicator(navController, username)
-        TimeLeft()
-    }
-}
+private var listOfQuestions = questions()
 
 @Composable
 private fun CountDownIndicator(navController: NavController, username: String) {
@@ -125,35 +60,31 @@ private fun CountDownIndicator(navController: NavController, username: String) {
 }
 
 @Composable
-private fun TimeLeft() {
-    var secondsLeft by remember {
-        mutableStateOf(41)
-    }
-
+private fun TimeLeft(secondsLeft: Int) {
     var textColor by remember {
         mutableStateOf(Color.Black)
     }
     Text(text = "$secondsLeft", fontFamily = font, fontSize = 20.sp, color = textColor)
 
     LaunchedEffect(key1 = secondsLeft) {
-        if (secondsLeft > 0) {
-            delay(1000)
-            secondsLeft--
-            if (secondsLeft <= 10) {
-                textColor = Color.Red
-            }
+        if (secondsLeft <= 10) {
+            textColor = Color.Red
         }
     }
 }
 
 @Composable
-private fun Points() {
-    var secondsLeft by remember {
-        mutableStateOf(41)
+private fun CountDownUI(navController: NavController, username: String, secondsLeft: Int) {
+    Box(
+        contentAlignment = Alignment.Center
+    ) {
+        CountDownIndicator(navController, username)
+        TimeLeft(secondsLeft)
     }
-    val points by remember {
-        mutableStateOf(0)
-    }
+}
+
+@Composable
+private fun Points(points: Int, secondsLeft: Int) {
     var doublePTS by remember {
         mutableStateOf("")
     }
@@ -161,12 +92,8 @@ private fun Points() {
     Text(text = "Points: $points$doublePTS", fontFamily = font, fontSize = 20.sp)
 
     LaunchedEffect(key1 = secondsLeft) {
-        if (secondsLeft > 0) {
-            delay(1000)
-            secondsLeft--
-            if (secondsLeft <= 10) {
-                doublePTS = " 2X"
-            }
+        if (secondsLeft <= 10) {
+            doublePTS = " 2X"
         }
     }
 }
@@ -214,5 +141,75 @@ private fun Submit(isEnabled: Boolean, onSubmit: () -> Unit) {
         modifier = Modifier.size(width = 348.dp, 73.dp)
     ) {
         Text(text = stringResource(id = R.string.submit), fontFamily = font, fontSize = 20.sp)
+    }
+}
+
+@Composable
+fun TriviaScreen(context: Context, navController: NavController, username: String) {
+    var currentQuestionIndex by remember {
+        mutableStateOf(0)
+    }
+    val currentQuestion = listOfQuestions[currentQuestionIndex]
+
+    var selectedOption by remember {
+        mutableStateOf(0)
+    }
+
+    var secondsLeft by remember {
+        mutableStateOf(41)
+    }
+
+    var points by remember {
+        mutableStateOf(0)
+    }
+
+    DisplayBackground(context = context)
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CountDownUI(navController, username, secondsLeft)
+        Spacer(modifier = Modifier.size(19.dp))
+
+        Points(points, secondsLeft)
+
+        CountryFlag(currentQuestion.flag)
+        Spacer(modifier = Modifier.size(21.dp))
+
+        OptionBox(currentOption = currentQuestion.option1, isSelected = selectedOption == 1) {
+            selectedOption = 1
+        }
+        Spacer(modifier = Modifier.size(21.dp))
+
+        OptionBox(currentOption = currentQuestion.option2, isSelected = selectedOption == 2) {
+            selectedOption = 2
+        }
+        Spacer(modifier = Modifier.size(21.dp))
+
+        OptionBox(currentOption = currentQuestion.option3, isSelected = selectedOption == 3) {
+            selectedOption = 3
+        }
+        Spacer(modifier = Modifier.size(21.dp))
+
+        OptionBox(currentOption = currentQuestion.option4, isSelected = selectedOption == 4) {
+            selectedOption = 4
+        }
+        Spacer(modifier = Modifier.size(21.dp))
+
+        Submit(isEnabled = selectedOption != 0) {
+            if (selectedOption == currentQuestion.correctOption) {
+                if (secondsLeft <= 10) points += 20 else points += 10
+            }
+            currentQuestionIndex++
+            selectedOption = 0
+        }
+    }
+    LaunchedEffect(key1 = secondsLeft) {
+        if (secondsLeft > 0) {
+            delay(1000)
+            secondsLeft--
+        }
     }
 }

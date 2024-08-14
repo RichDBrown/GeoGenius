@@ -58,7 +58,10 @@ fun Navigation(context: Context) {
             arguments = listOf(navArgument("username") {
                 type = NavType.StringType
                 nullable = false
-            })
+            }/*, navArgument("points") {
+                type = NavType.IntType
+                nullable = false
+            }*/)
         ) { backEntry ->
             val username = backEntry.arguments?.getString("username")
             ResultScreen(

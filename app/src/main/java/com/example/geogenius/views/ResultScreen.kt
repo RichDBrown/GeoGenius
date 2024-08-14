@@ -33,36 +33,6 @@ import com.example.geogenius.utils.Screen
 import com.example.geogenius.utils.font
 
 @Composable
-fun ResultScreen(context: Context, navController: NavController, username: String) {
-    DisplayBackground(context = context)
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 26.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Congrats()
-        Spacer(modifier = Modifier.size(17.dp))
-
-        Grade()
-        Spacer(modifier = Modifier.size(17.dp))
-
-        Text(text = "90% Correct", fontFamily = font, fontSize = 32.sp)
-        Spacer(modifier = Modifier.size(17.dp))
-
-        Score()
-        Spacer(modifier = Modifier.size(17.dp))
-
-        HighScores()
-        Spacer(modifier = Modifier.size(40.dp))
-
-        PlayAgain(navController)
-
-    }
-}
-
-@Composable
 private fun Congrats() {
     Text(
         text = "Congratulations XxYellowThunderxX!",
@@ -158,5 +128,32 @@ private fun PlayAgain(navController: NavController) {
         modifier = Modifier.size(width = 348.dp, 73.dp)
     ) {
         Text(text = stringResource(id = R.string.play_again), fontFamily = font, fontSize = 20.sp)
+    }
+}
+
+@Composable
+fun ResultScreen(context: Context, navController: NavController, username: String) {
+    DisplayBackground(context = context)
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = 26.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Congrats()
+        Spacer(modifier = Modifier.size(17.dp))
+
+        Grade()
+        Spacer(modifier = Modifier.size(17.dp))
+
+        Score()
+        Spacer(modifier = Modifier.size(17.dp))
+
+        HighScores()
+        Spacer(modifier = Modifier.size(40.dp))
+
+        PlayAgain(navController)
+
     }
 }
