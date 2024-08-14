@@ -1,4 +1,4 @@
-package com.example.geogenius.composables
+package com.example.geogenius.views
 
 import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
@@ -14,11 +14,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.geogenius.utils.Screen
 import com.example.geogenius.utils.font
 import kotlinx.coroutines.delay
 
 @Composable
-fun CountDownScreen(context: Context) {
+fun CountDownScreen(context: Context, navController: NavController, username: String) {
     DisplayBackground(context = context)
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -35,6 +37,9 @@ fun CountDownScreen(context: Context) {
             if (count > 1) {
                 delay(1000)
                 count--
+            } else {
+                delay(1000)
+                navController.navigate(Screen.TriviaScreen.withArgs(username))
             }
         }
     }

@@ -1,9 +1,10 @@
-package com.example.geogenius.composables
+package com.example.geogenius.views
 
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,13 +31,30 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.geogenius.R
+import com.example.geogenius.model.Question
+import com.example.geogenius.ui.theme.DarkBlue
 import com.example.geogenius.ui.theme.LightBlue
+import com.example.geogenius.utils.Screen
 import com.example.geogenius.utils.font
+import com.example.geogenius.utils.questions
 import kotlinx.coroutines.delay
 
+
+private val listOfQuestions = questions()
+
 @Composable
-fun TriviaScreen(context: Context) {
+fun TriviaScreen(context: Context, navController: NavController, username: String) {
+    var currentQuestionIndex by remember {
+        mutableStateOf(0)
+    }
+    val currentQuestion = listOfQuestions[currentQuestionIndex]
+
+    var selectedOption by remember {
+        mutableStateOf(0)
+    }
+
     DisplayBackground(context = context)
 
     Column(
@@ -44,33 +62,53 @@ fun TriviaScreen(context: Context) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        CountDown()
+        CountDown(navController, username)
         Spacer(modifier = Modifier.size(19.dp))
 
         Points()
 
-        CountryFlag()
+        CountryFlag(currentQuestion.flag)
         Spacer(modifier = Modifier.size(21.dp))
 
-        Choices()
+        OptionBox(currentOption = currentQuestion.option1, isSelected = selectedOption == 1) {
+            selectedOption = 1
+        }
         Spacer(modifier = Modifier.size(21.dp))
 
-        Submit()
+        OptionBox(currentOption = currentQuestion.option2, isSelected = selectedOption == 2) {
+            selectedOption = 2
+        }
+        Spacer(modifier = Modifier.size(21.dp))
+
+        OptionBox(currentOption = currentQuestion.option3, isSelected = selectedOption == 3) {
+            selectedOption = 3
+        }
+        Spacer(modifier = Modifier.size(21.dp))
+
+        OptionBox(currentOption = currentQuestion.option4, isSelected = selectedOption == 4) {
+            selectedOption = 4
+        }
+        Spacer(modifier = Modifier.size(21.dp))
+
+        Submit(isEnabled = selectedOption != 0) {
+            currentQuestionIndex++
+            selectedOption = 0
+        }
     }
 }
 
 @Composable
-private fun CountDown() {
+private fun CountDown(navController: NavController, username: String) {
     Box(
         contentAlignment = Alignment.Center
     ) {
-        CountDownIndicator()
+        CountDownIndicator(navController, username)
         TimeLeft()
     }
 }
 
 @Composable
-private fun CountDownIndicator() {
+private fun CountDownIndicator(navController: NavController, username: String) {
     var progress by remember {
         mutableStateOf(1f)
     }
@@ -80,6 +118,8 @@ private fun CountDownIndicator() {
         if (progress > .00) {
             delay(30)
             progress -= .001f
+        } else {
+            navController.navigate(Screen.ResultScreen.withArgs(username))
         }
     }
 }
@@ -111,7 +151,7 @@ private fun Points() {
     var secondsLeft by remember {
         mutableStateOf(41)
     }
-    var points by remember {
+    val points by remember {
         mutableStateOf(0)
     }
     var doublePTS by remember {
@@ -132,10 +172,10 @@ private fun Points() {
 }
 
 @Composable
-private fun CountryFlag() {
+private fun CountryFlag(currentFlag: Int) {
     Image(
-        painter = painterResource(id = R.drawable.ae),
-        contentDescription = "Flag",
+        painter = painterResource(id = currentFlag),
+        contentDescription = "Country Flag",
         modifier = Modifier
             .fillMaxHeight(.29f)
             .fillMaxWidth(.844f)
@@ -143,61 +183,34 @@ private fun CountryFlag() {
 }
 
 @Composable
-private fun Choices() {
+fun OptionBox(currentOption: String, isSelected: Boolean, onClick: () -> Unit) {
     Box(
         modifier = Modifier
             .size(width = 348.dp, height = 73.dp)
             .background(Color.White, RoundedCornerShape(13.dp))
-            .border(7.dp, Color.Black, RoundedCornerShape(13.dp)),
+            .border(
+                7.dp,
+                color = if (isSelected) DarkBlue else Color.Black,
+                RoundedCornerShape(13.dp)
+            )
+            .clickable { onClick() },
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "Afghanistan", fontFamily = font, fontSize = 20.sp)
-    }
-    Spacer(modifier = Modifier.size(21.dp))
-
-    Box(
-        modifier = Modifier
-            .size(width = 348.dp, height = 73.dp)
-            .background(Color.White, RoundedCornerShape(13.dp))
-            .border(7.dp, Color.Black, RoundedCornerShape(13.dp)),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Afghanistan", fontFamily = font, fontSize = 20.sp)
-    }
-    Spacer(modifier = Modifier.size(21.dp))
-
-    Box(
-        modifier = Modifier
-            .size(width = 348.dp, height = 73.dp)
-            .background(Color.White, RoundedCornerShape(13.dp))
-            .border(7.dp, Color.Black, RoundedCornerShape(13.dp)),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Afghanistan", fontFamily = font, fontSize = 20.sp)
-    }
-    Spacer(modifier = Modifier.size(21.dp))
-
-    Box(
-        modifier = Modifier
-            .size(width = 348.dp, height = 73.dp)
-            .background(Color.White, RoundedCornerShape(13.dp))
-            .border(7.dp, Color.Black, RoundedCornerShape(13.dp)),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Afghanistan", fontFamily = font, fontSize = 20.sp)
+        Text(text = currentOption, fontFamily = font, fontSize = 20.sp)
     }
 }
 
 @Composable
-private fun Submit() {
+private fun Submit(isEnabled: Boolean, onSubmit: () -> Unit) {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = { onSubmit() },
         colors = ButtonColors(
             containerColor = LightBlue,
             contentColor = Color.Black,
             disabledContainerColor = Color.Gray,
-            disabledContentColor = Color.Gray
+            disabledContentColor = Color.Black
         ),
+        enabled = isEnabled,
         modifier = Modifier.size(width = 348.dp, 73.dp)
     ) {
         Text(text = stringResource(id = R.string.submit), fontFamily = font, fontSize = 20.sp)

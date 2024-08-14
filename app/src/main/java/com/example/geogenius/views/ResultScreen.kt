@@ -1,4 +1,4 @@
-package com.example.geogenius.composables
+package com.example.geogenius.views
 
 import android.content.Context
 import androidx.compose.foundation.background
@@ -26,12 +26,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.geogenius.R
 import com.example.geogenius.ui.theme.LightBlue
+import com.example.geogenius.utils.Screen
 import com.example.geogenius.utils.font
 
 @Composable
-fun ResultScreen(context: Context) {
+fun ResultScreen(context: Context, navController: NavController, username: String) {
     DisplayBackground(context = context)
     Column(
         modifier = Modifier
@@ -55,7 +57,7 @@ fun ResultScreen(context: Context) {
         HighScores()
         Spacer(modifier = Modifier.size(40.dp))
 
-        PlayAgain()
+        PlayAgain(navController)
 
     }
 }
@@ -144,9 +146,9 @@ private fun HighScores() {
 }
 
 @Composable
-private fun PlayAgain() {
+private fun PlayAgain(navController: NavController) {
     Button(
-        onClick = { /*TODO*/ },
+        onClick = { navController.navigate(Screen.LoginScreen.route) },
         colors = ButtonColors(
             containerColor = LightBlue,
             contentColor = Color.Black,

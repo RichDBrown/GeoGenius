@@ -1,4 +1,4 @@
-package com.example.geogenius.composables
+package com.example.geogenius.views
 
 import android.content.Context
 import android.graphics.Bitmap
