@@ -38,22 +38,16 @@ fun options(): MutableList<String> {
     return options
 }
 
-fun questions(): List<Question> {
-    val questions = mutableListOf<Question>()
-    var options: List<String>
-    var correctOption: Int
-    for (i in 1..100) {
-        options = options()
-        correctOption = Random.nextInt(4)
-        val question = Question(
-            countries[options.elementAt(correctOption)]!!,
-            options[0],
-            options[1],
-            options[2],
-            options[3],
-            correctOption + 1
-        )
-        questions.add(question)
-    }
-    return questions
+fun question(): Question {
+    val options = options()
+    val correctOption = Random.nextInt(4)
+    val question = Question(
+        countries[options.elementAt(correctOption)]!!,
+        options[0],
+        options[1],
+        options[2],
+        options[3],
+        correctOption + 1
+    )
+    return question
 }

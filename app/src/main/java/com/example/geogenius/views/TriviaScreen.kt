@@ -37,10 +37,10 @@ import com.example.geogenius.ui.theme.DarkBlue
 import com.example.geogenius.ui.theme.LightBlue
 import com.example.geogenius.utils.Screen
 import com.example.geogenius.utils.font
-import com.example.geogenius.utils.questions
+import com.example.geogenius.utils.question
 import kotlinx.coroutines.delay
 
-private var listOfQuestions = questions()
+private var question = question()
 
 @Composable
 private fun CountDownIndicator(navController: NavController, username: String) {
@@ -146,11 +146,6 @@ private fun Submit(isEnabled: Boolean, onSubmit: () -> Unit) {
 
 @Composable
 fun TriviaScreen(context: Context, navController: NavController, username: String) {
-    var currentQuestionIndex by remember {
-        mutableStateOf(0)
-    }
-    val currentQuestion = listOfQuestions[currentQuestionIndex]
-
     var selectedOption by remember {
         mutableStateOf(0)
     }
@@ -175,34 +170,34 @@ fun TriviaScreen(context: Context, navController: NavController, username: Strin
 
         Points(points, secondsLeft)
 
-        CountryFlag(currentQuestion.flag)
+        CountryFlag(question.flag)
         Spacer(modifier = Modifier.size(21.dp))
 
-        OptionBox(currentOption = currentQuestion.option1, isSelected = selectedOption == 1) {
+        OptionBox(currentOption = question.option1, isSelected = selectedOption == 1) {
             selectedOption = 1
         }
         Spacer(modifier = Modifier.size(21.dp))
 
-        OptionBox(currentOption = currentQuestion.option2, isSelected = selectedOption == 2) {
+        OptionBox(currentOption = question.option2, isSelected = selectedOption == 2) {
             selectedOption = 2
         }
         Spacer(modifier = Modifier.size(21.dp))
 
-        OptionBox(currentOption = currentQuestion.option3, isSelected = selectedOption == 3) {
+        OptionBox(currentOption = question.option3, isSelected = selectedOption == 3) {
             selectedOption = 3
         }
         Spacer(modifier = Modifier.size(21.dp))
 
-        OptionBox(currentOption = currentQuestion.option4, isSelected = selectedOption == 4) {
+        OptionBox(currentOption = question.option4, isSelected = selectedOption == 4) {
             selectedOption = 4
         }
         Spacer(modifier = Modifier.size(21.dp))
 
         Submit(isEnabled = selectedOption != 0) {
-            if (selectedOption == currentQuestion.correctOption) {
+            if (selectedOption == question.correctOption) {
                 if (secondsLeft <= 10) points += 20 else points += 10
             }
-            currentQuestionIndex++
+            question = question()
             selectedOption = 0
         }
     }
