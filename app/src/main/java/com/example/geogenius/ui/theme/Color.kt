@@ -12,4 +12,3 @@ val Pink40 = Color(0xFF7D5260)
 
 val DarkBlue = Color(0xFF2E3FFF)
 var LightBlue = Color(0xFFADB4FF)
-val Poop = Color(0xFF593415)

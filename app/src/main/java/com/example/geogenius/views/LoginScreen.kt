@@ -2,6 +2,7 @@ package com.example.geogenius.views
 
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,6 +36,16 @@ import com.example.geogenius.ui.theme.DarkBlue
 import com.example.geogenius.utils.Screen
 import com.example.geogenius.utils.font
 
+/**
+ * A composable function that displays Welcome to GeoGenius centered on the screen.
+ *
+ * This function uses a string resource for the text, sets the font size to 40sp,
+ * centers the text, and applies a custom font family.
+ *
+ * @see stringResource for fetching the localized string.
+ * @see TextAlign.Center for aligning the text in the center.
+ * @see font for the custom font family used.
+ */
 @Composable
 private fun TitleText() {
     Text(
@@ -45,6 +56,15 @@ private fun TitleText() {
     )
 }
 
+/**
+ * A composable function that displays the description of the game inside a styled card.
+ *
+ * @see Card for creating a material design card.
+ * @see RoundedCornerShape for rounding the corners of the card.
+ * @see stringResource for fetching the localized string.
+ * @see TextAlign.Center for aligning the text in the center.
+ * @see Modifier for applying layout and styling.
+ */
 @Composable
 private fun DescriptionCard() {
     Card(
@@ -63,8 +83,32 @@ private fun DescriptionCard() {
     }
 }
 
+/**
+ * A composable function that displays a login card with a text field and a button.
+ *
+ * This function creates a card that contains a column layout with instructions,
+ * an input field for the username, and a button for to navigate to the next screen. The card has rounded corners
+ * and a shadow elevation to enhance its appearance.
+ *
+ * The text displayed at the top of the card provides instructions to the user,
+ * which are fetched from a string resource. Below the instructions, there is an
+ * outlined text field for the user to enter their name. The entered name is stored
+ * in a mutable state and is used to enable the "Let's Go" button, which is located
+ * at the bottom right of the card.
+ *
+ * When the "Let's Go" button is clicked, the user is navigated to the next screen
+ * `CountDownScreen` with the entered username passed as an argument.
+ *
+ * @param navController The navigation controller used to handle navigation between screens.
+ *
+ * @see Card for creating a material design card.
+ * @see Column for arranging UI elements vertically.
+ * @see OutlinedTextField for creating an input field with a border.
+ * @see Button for creating a clickable button.
+ * @see NavController for navigating between screens in a Compose application.
+ */
 @Composable
-private fun LoginCard(navController: NavController) {
+private fun LoginCard(context: Context, navController: NavController) {
     Card(
         shape = RoundedCornerShape(13.dp),
         elevation = CardDefaults.cardElevation(6.dp),
@@ -101,14 +145,20 @@ private fun LoginCard(navController: NavController) {
                     .padding(16.dp, 16.dp), contentAlignment = Alignment.BottomEnd
             ) {
                 Button(
-                    onClick = { navController.navigate(Screen.CountDownScreen.withArgs(username)) },
+                    onClick = {
+                        if (username.isEmpty()) {
+                            Toast.makeText(context, "Please enter a username", Toast.LENGTH_SHORT)
+                                .show()
+                        } else {
+                            navController.navigate(Screen.CountDownScreen.withArgs(username))
+                        }
+                    },
                     colors = ButtonColors(
                         containerColor = DarkBlue,
                         contentColor = Color.White,
-                        disabledContentColor = Color.Gray,
+                        disabledContentColor = Color.Black,
                         disabledContainerColor = Color.Gray
-                    ),
-                    enabled = username.isNotBlank()
+                    )
                 ) {
                     Text(text = "Let's Go", fontFamily = font, fontSize = 14.sp)
                 }
@@ -117,9 +167,33 @@ private fun LoginCard(navController: NavController) {
     }
 }
 
+/**
+ * A composable function that displays the login screen of the application.
+ *
+ * The `LoginScreen` function is responsible for assembling and displaying the UI
+ * components that make up the login screen. It includes the background image, the title,
+ * the description, and the login card. The function uses a column layout to arrange
+ * these components vertically in the center of the screen.
+ *
+ * The background image is displayed using the `DisplayBackground` composable, which
+ * converts a drawable resource to a bitmap and sets it as the background. The screen
+ * content includes:
+ * - `TitleText`: Displays the screen's title at the top.
+ * - `DescriptionCard`: Provides description of the game.
+ * - `LoginCard`: Contains the login card where the user can enter their username
+ *   and navigate to the next screen using the provided `NavController`.
+ *
+ * @param context The context from which to access resources such as drawables.
+ * @param navController The navigation controller used to handle navigation to other screens.
+ *
+ * @see DisplayBackground for setting the background image.
+ * @see TitleText for displaying the title.
+ * @see DescriptionCard for displaying the description.
+ * @see LoginCard for the login card and navigation handling.
+ */
 @Composable
 fun LoginScreen(context: Context, navController: NavController) {
-    DisplayBackground(context = context)
+    DisplayBackground(drawableToBitmap(context, R.drawable.background_color))
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -132,6 +206,6 @@ fun LoginScreen(context: Context, navController: NavController) {
         DescriptionCard()
         Spacer(modifier = Modifier.size(34.dp))
 
-        LoginCard(navController)
+        LoginCard(context, navController)
     }
 }

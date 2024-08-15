@@ -15,13 +15,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.geogenius.R
 import com.example.geogenius.utils.Screen
 import com.example.geogenius.utils.font
 import kotlinx.coroutines.delay
 
+/**
+ * Composable function that displays a countdown timer and navigates to the trivia screen upon completion.
+ *
+ * This function sets up a background image using the [DisplayBackground] composable with a drawable
+ * resource. It then displays a countdown timer in the center of the screen.
+ *
+ * @param context The context used to retrieve the background drawable resource.
+ * @param navController The [NavController] used to handle navigation to the next screen.
+ * @param username The username to be passed to the trivia screen.
+ */
+
 @Composable
 fun CountDownScreen(context: Context, navController: NavController, username: String) {
-    DisplayBackground(context = context)
+    DisplayBackground(drawableToBitmap(context, R.drawable.background_color))
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,

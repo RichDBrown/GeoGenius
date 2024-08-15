@@ -42,8 +42,21 @@ import kotlinx.coroutines.delay
 
 private var question = question()
 
+/**
+ * A composable function that displays a countdown timer using a circular progress indicator.
+ *
+ * This function shows a progress indicator that gradually decreases over time.
+ * When the progress reaches 0, it navigates to the result screen.
+ *
+ * @param navController The NavController used to navigate to the result screen when the countdown ends.
+ * @param username The username of the player, passed as an argument to the result screen.
+ * @param points The total score of the player, passed as an argument to the result screen.
+ *
+ * @see CircularProgressIndicator for the progress indicator display.
+ * @see LaunchedEffect for managing side-effects like time delay.
+ */
 @Composable
-private fun CountDownIndicator(navController: NavController, username: String) {
+private fun CountDownIndicator(navController: NavController, username: String, points: Int) {
     var progress by remember {
         mutableStateOf(1f)
     }
@@ -54,11 +67,21 @@ private fun CountDownIndicator(navController: NavController, username: String) {
             delay(30)
             progress -= .001f
         } else {
-            navController.navigate(Screen.ResultScreen.withArgs(username))
+            navController.navigate(Screen.ResultScreen.withArgs(username, points))
         }
     }
 }
 
+/**
+ * A composable function that displays the remaining time in seconds.
+ *
+ * The text color changes to red when there are 10 seconds left.
+ *
+ * @param secondsLeft The number of seconds remaining.
+ *
+ * @see Text for displaying text on the screen.
+ * @see LaunchedEffect for managing side-effects based on remaining time.
+ */
 @Composable
 private fun TimeLeft(secondsLeft: Int) {
     var textColor by remember {
@@ -73,16 +96,40 @@ private fun TimeLeft(secondsLeft: Int) {
     }
 }
 
+/**
+ * A composable function that combines the countdown timer and the time left text display.
+ *
+ * This function creates a layout that centers both the countdown indicator and the time left text.
+ *
+ * @param navController The NavController used to navigate between screens.
+ * @param username The username of the player.
+ * @param points The total score of the player.
+ * @param secondsLeft The number of seconds remaining in the countdown.
+ *
+ * @see CountDownIndicator for the circular progress indicator.
+ * @see TimeLeft for the display of remaining time.
+ */
 @Composable
-private fun CountDownUI(navController: NavController, username: String, secondsLeft: Int) {
+private fun CountDownUI(navController: NavController, username: String, points: Int, secondsLeft: Int) {
     Box(
         contentAlignment = Alignment.Center
     ) {
-        CountDownIndicator(navController, username)
+        CountDownIndicator(navController, username, points)
         TimeLeft(secondsLeft)
     }
 }
 
+/**
+ * A composable function that displays the player's current score.
+ *
+ * When there are 10 seconds or less left in the countdown, the points display is updated to show a "2X" multiplier.
+ *
+ * @param points The current score of the player.
+ * @param secondsLeft The number of seconds remaining in the countdown.
+ *
+ * @see Text for displaying text on the screen.
+ * @see LaunchedEffect for managing side-effects based on remaining time.
+ */
 @Composable
 private fun Points(points: Int, secondsLeft: Int) {
     var doublePTS by remember {
@@ -98,6 +145,16 @@ private fun Points(points: Int, secondsLeft: Int) {
     }
 }
 
+/**
+ * A composable function that displays the flag of a country.
+ *
+ * The flag image is scaled to fit a specific portion of the screen.
+ *
+ * @param currentFlag The resource ID of the drawable representing the country's flag.
+ *
+ * @see Image for displaying images in Jetpack Compose.
+ * @see Modifier for applying layout and styling options.
+ */
 @Composable
 private fun CountryFlag(currentFlag: Int) {
     Image(
@@ -109,6 +166,19 @@ private fun CountryFlag(currentFlag: Int) {
     )
 }
 
+/**
+ * A composable function that displays a clickable option box for a trivia question.
+ *
+ * The option box can be selected by the user, and its border color changes based on selection status.
+ *
+ * @param currentOption The text of the option being displayed.
+ * @param isSelected Whether the option is currently selected by the user.
+ * @param onClick A callback function triggered when the user clicks the option box.
+ *
+ * @see Box for creating a layout container.
+ * @see Modifier for applying layout and styling options.
+ * @see clickable for detecting user clicks.
+ */
 @Composable
 fun OptionBox(currentOption: String, isSelected: Boolean, onClick: () -> Unit) {
     Box(
@@ -127,6 +197,18 @@ fun OptionBox(currentOption: String, isSelected: Boolean, onClick: () -> Unit) {
     }
 }
 
+/**
+ * A composable function that displays a submit button for submitting an answer.
+ *
+ * The button is only enabled when the user has selected an option.
+ *
+ * @param isEnabled Whether the button is enabled and can be clicked.
+ * @param onSubmit A callback function triggered when the user clicks the submit button.
+ *
+ * @see Button for creating a clickable button.
+ * @see Modifier for applying layout and styling options.
+ * @see ButtonColors for customizing button colors.
+ */
 @Composable
 private fun Submit(isEnabled: Boolean, onSubmit: () -> Unit) {
     Button(
@@ -144,6 +226,19 @@ private fun Submit(isEnabled: Boolean, onSubmit: () -> Unit) {
     }
 }
 
+/**
+ * A composable function that displays the entire trivia screen.
+ *
+ * The screen includes a countdown timer, score display, country flag, multiple-choice options,
+ * and a submit button. It handles user interactions and updates the UI accordingly.
+ *
+ * @param context The context for accessing resources and displaying the background.
+ * @param navController The NavController used to navigate between screens.
+ * @param username The username of the player.
+ *
+ * @see Column for arranging UI components vertically.
+ * @see LaunchedEffect for managing side-effects like countdown and option selection.
+ */
 @Composable
 fun TriviaScreen(context: Context, navController: NavController, username: String) {
     var selectedOption by remember {
@@ -158,14 +253,14 @@ fun TriviaScreen(context: Context, navController: NavController, username: Strin
         mutableStateOf(0)
     }
 
-    DisplayBackground(context = context)
+    DisplayBackground(drawableToBitmap(context, R.drawable.background_color))
 
     Column(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        CountDownUI(navController, username, secondsLeft)
+        CountDownUI(navController, username, points, secondsLeft)
         Spacer(modifier = Modifier.size(19.dp))
 
         Points(points, secondsLeft)
