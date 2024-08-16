@@ -43,39 +43,9 @@ import kotlinx.coroutines.delay
 private var question = question()
 
 /**
- * A composable function that displays a countdown timer using a circular progress indicator.
- *
- * This function shows a progress indicator that gradually decreases over time.
- * When the progress reaches 0, it navigates to the result screen.
- *
- * @param navController The NavController used to navigate to the result screen when the countdown ends.
- * @param username The username of the player, passed as an argument to the result screen.
- * @param points The total score of the player, passed as an argument to the result screen.
- *
- * @see CircularProgressIndicator for the progress indicator display.
- * @see LaunchedEffect for managing side-effects like time delay.
- */
-@Composable
-private fun CountDownIndicator(navController: NavController, username: String, points: Int) {
-    var progress by remember {
-        mutableStateOf(1f)
-    }
-    CircularProgressIndicator(progress = { progress })
-
-    LaunchedEffect(key1 = progress) {
-        if (progress > .00) {
-            delay(30)
-            progress -= .001f
-        } else {
-            navController.navigate(Screen.ResultScreen.withArgs(username, points))
-        }
-    }
-}
-
-/**
  * A composable function that displays the remaining time in seconds.
  *
- * The text color changes to red when there are 10 seconds left.
+ * The text color changes to red when there are 10 or fewer seconds left.
  *
  * @param secondsLeft The number of seconds remaining.
  *
@@ -97,24 +67,20 @@ private fun TimeLeft(secondsLeft: Int) {
 }
 
 /**
- * A composable function that combines the countdown timer and the time left text display.
+ * A composable function that displays a circular progress indicator and the remaining time in seconds.
  *
- * This function creates a layout that centers both the countdown indicator and the time left text.
+ * This function creates a layout that centers both the circular progress indicator and the time left.
  *
- * @param navController The NavController used to navigate between screens.
- * @param username The username of the player.
- * @param points The total score of the player.
- * @param secondsLeft The number of seconds remaining in the countdown.
+ * @param secondsLeft The number of seconds remaining.
  *
- * @see CountDownIndicator for the circular progress indicator.
  * @see TimeLeft for the display of remaining time.
  */
 @Composable
-private fun CountDownUI(navController: NavController, username: String, points: Int, secondsLeft: Int) {
+private fun CountDownIndicator(secondsLeft: Int) {
     Box(
         contentAlignment = Alignment.Center
     ) {
-        CountDownIndicator(navController, username, points)
+        CircularProgressIndicator(progress = { (secondsLeft.toFloat() / 100) * 2})
         TimeLeft(secondsLeft)
     }
 }
@@ -246,7 +212,7 @@ fun TriviaScreen(context: Context, navController: NavController, username: Strin
     }
 
     var secondsLeft by remember {
-        mutableStateOf(41)
+        mutableStateOf(50)
     }
 
     var points by remember {
@@ -260,7 +226,7 @@ fun TriviaScreen(context: Context, navController: NavController, username: Strin
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        CountDownUI(navController, username, points, secondsLeft)
+        CountDownIndicator(secondsLeft)
         Spacer(modifier = Modifier.size(19.dp))
 
         Points(points, secondsLeft)
@@ -300,6 +266,8 @@ fun TriviaScreen(context: Context, navController: NavController, username: Strin
         if (secondsLeft > 0) {
             delay(1000)
             secondsLeft--
+        } else {
+            navController.navigate(Screen.ResultScreen.withArgs(username, points))
         }
     }
 }

@@ -78,19 +78,19 @@ private fun Congrats(username: String) {
  */
 @Composable
 private fun Grade(context: Context, points: Int) {
-    if (points >= 250) {
+    if (points >= 300) {
         medal = R.drawable.gold_medal
         grade = "A+"
     }
-    else if (points > 200) {
+    else if (points > 250) {
         medal = R.drawable.silver_medal
         grade = "B"
     }
-    else if (points > 150) {
+    else if (points > 200) {
         medal = R.drawable.bronze_medal
         grade = "C"
     }
-    else if (points > 100) {
+    else if (points > 150) {
         medal = R.drawable.copper_medal
         grade = "D"
     } else {
